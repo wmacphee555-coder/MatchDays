@@ -47,7 +47,6 @@ button {
   border-radius: 12px;
   font-size: 20px;
   font-weight: bold;
-  cursor: pointer;
 }
 
 .start {
@@ -87,7 +86,7 @@ button {
 
 .score {
   text-align: center;
-  font-size: 46px;
+  font-size: 48px;
   font-weight: bold;
   margin: 15px 0;
 }
@@ -145,6 +144,11 @@ button {
   color: white;
 }
 
+.no-assist {
+  background: #20c76a;
+  color: white;
+}
+
 .event {
   background: #222;
   border-radius: 8px;
@@ -165,11 +169,6 @@ button {
   padding: 8px 0;
   border-bottom: 1px solid #444;
 }
-
-.small {
-  font-size: 14px;
-  color: #bbb;
-}
 </style>
 </head>
 
@@ -177,121 +176,110 @@ button {
 
 <div class="container">
 
-  <!-- SETUP SCREEN -->
+<div id="setup">
 
-  <div id="setup">
+<h1>⚽ Arniston Match Day</h1>
 
-    <h1>⚽ Arniston Match Day</h1>
+<input
+id="opponentInput"
+type="text"
+placeholder="Opponent team"
+autocomplete="off"
+>
 
-    <input
-      id="opponentInput"
-      type="text"
-      placeholder="Opponent team"
-      autocomplete="off"
-    >
-
-    <button class="start" onclick="startMatch()">
-      ▶ START MATCH
-    </button>
-
-  </div>
-
-
-  <!-- MATCH SCREEN -->
-
-  <div id="match" class="hidden">
-
-    <h1 id="matchTitle">
-      Arniston Rangers
-    </h1>
-
-    <div class="score">
-      <span id="our">0</span>
-      -
-      <span id="opp">0</span>
-    </div>
-
-    <div class="clock" id="clock">
-      00:00
-    </div>
-
-    <button class="goal" onclick="ourGoal()">
-      ⚽ OUR GOAL
-    </button>
-
-    <button class="oppgoal" onclick="opponentGoal()">
-      🔴 OPPOSITION GOAL
-    </button>
-
-    <button class="sub" onclick="substitution()">
-      🔄 SUBSTITUTION
-    </button>
-
-    <button class="pause" onclick="toggleClock()" id="pauseButton">
-      ⏸ PAUSE CLOCK
-    </button>
-
-    <button class="undo" onclick="undoLast()">
-      ↩ UNDO LAST EVENT
-    </button>
-
-    <button class="end" onclick="fullTime()">
-      🏁 FULL TIME
-    </button>
-
-    <div class="stats">
-      <h2>Match Events</h2>
-      <div id="events"></div>
-    </div>
-
-  </div>
+<button class="start" onclick="startMatch()">
+▶ START MATCH
+</button>
 
 </div>
 
 
-<!-- PLAYER SELECTION POPUP -->
+<div id="match" class="hidden">
+
+<h1 id="matchTitle">
+Arniston Rangers
+</h1>
+
+<div class="score">
+<span id="our">0</span>
+-
+<span id="opp">0</span>
+</div>
+
+<div class="clock" id="clock">
+00:00
+</div>
+
+<button class="goal" onclick="ourGoal()">
+⚽ OUR GOAL
+</button>
+
+<button class="oppgoal" onclick="opponentGoal()">
+🔴 OPPOSITION GOAL
+</button>
+
+<button class="sub" onclick="substitution()">
+🔄 SUBSTITUTION
+</button>
+
+<button class="pause" onclick="toggleClock()" id="pauseButton">
+⏸ PAUSE CLOCK
+</button>
+
+<button class="undo" onclick="undoLast()">
+↩ UNDO LAST EVENT
+</button>
+
+<button class="end" onclick="fullTime()">
+🏁 FULL TIME
+</button>
+
+<div class="stats">
+
+<h2>Match Events</h2>
+
+<div id="events"></div>
+
+</div>
+
+</div>
+
+</div>
+
 
 <div id="modal" class="modal hidden">
 
-  <div class="modal-box">
+<div class="modal-box">
 
-    <h2 id="modalTitle">
-      Choose Player
-    </h2>
+<h2 id="modalTitle">
+Choose Player
+</h2>
 
-    <div id="playerButtons" class="player-grid"></div>
+<div id="playerButtons" class="player-grid"></div>
 
-    <button class="cancel" onclick="closeModal()">
-      CANCEL
-    </button>
+<button class="cancel" onclick="closeModal()">
+CANCEL
+</button>
 
-  </div>
+</div>
 
 </div>
 
 
 <script>
 
-/* =========================
-   PLAYERS
-========================= */
-
 const players = [
-  "Finley",
-  "Kai",
-  "Matthew",
-  "Fyfe",
-  "Jax",
-  "Leo",
-  "Aahill",
-  "William",
-  "Aiden"
+"Finley",
+"Kai",
+"Matthew",
+"Fyfe",
+"Jax",
+"Leo",
+"Aahill",
+"William",
+"Aiden"
 ];
 
-
-/* =========================
-   MATCH DATA
-========================= */
 
 let opponent = "";
 
@@ -308,692 +296,665 @@ let events = [];
 let stats = {};
 
 
-/* =========================
-   START MATCH
-========================= */
+/* START MATCH */
 
 function startMatch(){
 
-  opponent =
-    document.getElementById("opponentInput").value.trim();
+opponent =
+document.getElementById("opponentInput").value.trim();
 
-  if(!opponent){
+if(!opponent){
 
-    alert("Enter the opponent team.");
+alert("Enter the opponent team.");
 
-    return;
-
-  }
-
-
-  /* Reset match */
-
-  ourScore = 0;
-  oppScore = 0;
-
-  matchSeconds = 0;
-
-  events = [];
-
-  stats = {};
-
-
-  players.forEach(player => {
-
-    stats[player] = {
-
-      goals: 0,
-
-      assists: 0,
-
-      minutes: 0,
-
-      appearances: 1,
-
-      onPitch: true
-
-    };
-
-  });
-
-
-  document.getElementById("our").textContent = "0";
-
-  document.getElementById("opp").textContent = "0";
-
-  document.getElementById("clock").textContent = "00:00";
-
-  document.getElementById("events").innerHTML = "";
-
-
-  document.getElementById("setup")
-    .classList.add("hidden");
-
-  document.getElementById("match")
-    .classList.remove("hidden");
-
-
-  document.getElementById("matchTitle").textContent =
-    "Arniston Rangers vs " + opponent;
-
-
-  startClock();
+return;
 
 }
 
 
-/* =========================
-   CLOCK
-========================= */
+ourScore = 0;
+oppScore = 0;
+matchSeconds = 0;
+events = [];
+stats = {};
+
+
+players.forEach(function(player){
+
+stats[player] = {
+
+goals: 0,
+assists: 0,
+minutes: 0,
+appearances: 1,
+onPitch: true
+
+};
+
+});
+
+
+document.getElementById("our").textContent = "0";
+document.getElementById("opp").textContent = "0";
+document.getElementById("clock").textContent = "00:00";
+document.getElementById("events").innerHTML = "";
+
+
+document.getElementById("setup")
+.classList.add("hidden");
+
+document.getElementById("match")
+.classList.remove("hidden");
+
+
+document.getElementById("matchTitle").textContent =
+"Arniston Rangers vs " + opponent;
+
+
+startClock();
+
+}
+
+
+/* CLOCK */
 
 function startClock(){
 
-  if(clockRunning) return;
+if(clockRunning) return;
 
-  clockRunning = true;
+clockRunning = true;
 
-  clockInterval = setInterval(function(){
+clockInterval = setInterval(function(){
 
-    matchSeconds++;
+matchSeconds++;
 
-    updateClock();
+updateClock();
 
-  },1000);
+},1000);
 
 }
 
 
 function pauseClock(){
 
-  clockRunning = false;
+clockRunning = false;
 
-  clearInterval(clockInterval);
+clearInterval(clockInterval);
+
+clockInterval = null;
 
 }
 
 
 function toggleClock(){
 
-  if(clockRunning){
+if(clockRunning){
 
-    pauseClock();
+pauseClock();
 
-    document.getElementById("pauseButton").textContent =
-      "▶ RESUME CLOCK";
+document.getElementById("pauseButton").textContent =
+"▶ RESUME CLOCK";
 
-  }else{
+}else{
 
-    startClock();
+startClock();
 
-    document.getElementById("pauseButton").textContent =
-      "⏸ PAUSE CLOCK";
+document.getElementById("pauseButton").textContent =
+"⏸ PAUSE CLOCK";
 
-  }
+}
 
 }
 
 
 function updateClock(){
 
-  let minutes =
-    Math.floor(matchSeconds / 60);
+let minutes =
+Math.floor(matchSeconds / 60);
 
-  let seconds =
-    matchSeconds % 60;
+let seconds =
+matchSeconds % 60;
 
-  document.getElementById("clock").textContent =
-    String(minutes).padStart(2,"0") +
-    ":" +
-    String(seconds).padStart(2,"0");
+document.getElementById("clock").textContent =
+String(minutes).padStart(2,"0") +
+":" +
+String(seconds).padStart(2,"0");
 
 }
 
 
 function getTime(){
 
-  let minutes =
-    Math.floor(matchSeconds / 60);
+let minutes =
+Math.floor(matchSeconds / 60);
 
-  let seconds =
-    matchSeconds % 60;
+let seconds =
+matchSeconds % 60;
 
-  return (
-    String(minutes).padStart(2,"0") +
-    ":" +
-    String(seconds).padStart(2,"0")
-  );
+return (
+String(minutes).padStart(2,"0") +
+":" +
+String(seconds).padStart(2,"0")
+);
 
 }
 
 
-/* =========================
-   PLAYER POPUP
-========================= */
+/* PLAYER CHOICE */
 
 function choosePlayer(title, callback){
 
-  document.getElementById("modalTitle").textContent =
-    title;
+let modal =
+document.getElementById("modal");
 
-  let container =
-    document.getElementById("playerButtons");
+let container =
+document.getElementById("playerButtons");
 
-  container.innerHTML = "";
+document.getElementById("modalTitle").textContent =
+title;
 
-
-  players.forEach(function(player){
-
-    let button =
-      document.createElement("button");
-
-    button.textContent = player;
-
-    button.onclick = function(){
-
-      closeModal();
-
-      callback(player);
-
-    };
-
-    container.appendChild(button);
-
-  });
+container.innerHTML = "";
 
 
-  let modal =
-    document.getElementById("modal");
+players.forEach(function(player){
 
-  modal.classList.remove("hidden");
+let button =
+document.createElement("button");
 
-  modal.style.display = "flex";
+button.textContent = player;
+
+button.onclick = function(){
+
+closeModal();
+
+callback(player);
+
+};
+
+container.appendChild(button);
+
+});
+
+
+modal.classList.remove("hidden");
+
+modal.style.display = "flex";
 
 }
 
 
 function closeModal(){
 
-  let modal =
-    document.getElementById("modal");
+let modal =
+document.getElementById("modal");
 
-  modal.style.display = "none";
+modal.style.display = "none";
 
-  modal.classList.add("hidden");
+modal.classList.add("hidden");
 
 }
 
 
-/* =========================
-   OUR GOAL
-========================= */
+/* OUR GOAL */
 
 function ourGoal(){
 
-  choosePlayer(
-    "⚽ WHO SCORED?",
-    function(scorer){
+choosePlayer(
+"⚽ WHO SCORED?",
+function(scorer){
 
-      chooseAssist(scorer);
+showAssistChoice(scorer);
 
-    }
-  );
+}
+);
 
 }
 
 
-function chooseAssist(scorer){
+/* ASSIST */
 
-  document.getElementById("modalTitle").textContent =
-    "🎯 ASSIST?";
+function showAssistChoice(scorer){
 
+let modal =
+document.getElementById("modal");
 
-  let container =
-    document.getElementById("playerButtons");
-
-  container.innerHTML = "";
-
-
-  let noAssist =
-    document.createElement("button");
-
-  noAssist.textContent =
-    "NO ASSIST";
-
-  noAssist.style.background =
-    "#20c76a";
-
-  noAssist.style.color =
-    "white";
+let container =
+document.getElementById("playerButtons");
 
 
-  noAssist.onclick = function(){
+document.getElementById("modalTitle").textContent =
+"🎯 ASSIST?";
 
-    closeModal();
-
-    recordGoal(
-      scorer,
-      "NONE"
-    );
-
-  };
+container.innerHTML = "";
 
 
-  container.appendChild(noAssist);
+/* NO ASSIST */
+
+let noAssist =
+document.createElement("button");
+
+noAssist.textContent =
+"NO ASSIST";
+
+noAssist.className =
+"no-assist";
+
+noAssist.onclick = function(){
+
+closeModal();
+
+recordGoal(
+scorer,
+"NONE"
+);
+
+};
+
+container.appendChild(noAssist);
 
 
-  players.forEach(function(player){
+/* PLAYER ASSISTS */
 
-    if(player === scorer) return;
+players.forEach(function(player){
+
+if(player === scorer) return;
+
+let button =
+document.createElement("button");
+
+button.textContent = player;
+
+button.onclick = function(){
+
+closeModal();
+
+recordGoal(
+scorer,
+player
+);
+
+};
+
+container.appendChild(button);
+
+});
 
 
-    let button =
-      document.createElement("button");
+modal.classList.remove("hidden");
 
-    button.textContent = player;
-
-
-    button.onclick = function(){
-
-      closeModal();
-
-      recordGoal(
-        scorer,
-        player
-      );
-
-    };
-
-
-    container.appendChild(button);
-
-  });
+modal.style.display = "flex";
 
 }
 
 
-/* =========================
-   RECORD GOAL
-========================= */
+/* RECORD GOAL */
 
 function recordGoal(scorer, assist){
 
-  ourScore++;
+ourScore++;
 
-  document.getElementById("our").textContent =
-    ourScore;
-
-
-  stats[scorer].goals++;
+document.getElementById("our").textContent =
+ourScore;
 
 
-  if(assist !== "NONE"){
-
-    stats[assist].assists++;
-
-  }
+stats[scorer].goals++;
 
 
-  events.push({
+if(
+assist !== "NONE"
+){
 
-    type: "goal",
-
-    scorer: scorer,
-
-    assist: assist,
-
-    time: getTime()
-
-  });
-
-
-  renderEvents();
+stats[assist].assists++;
 
 }
 
 
-/* =========================
-   OPPOSITION GOAL
-========================= */
+events.push({
+
+type: "goal",
+
+scorer: scorer,
+
+assist: assist,
+
+time: getTime()
+
+});
+
+
+renderEvents();
+
+}
+
+
+/* OPPOSITION GOAL */
 
 function opponentGoal(){
 
-  oppScore++;
+oppScore++;
 
-  document.getElementById("opp").textContent =
-    oppScore;
-
-
-  events.push({
-
-    type: "opponentGoal",
-
-    time: getTime()
-
-  });
+document.getElementById("opp").textContent =
+oppScore;
 
 
-  renderEvents();
+events.push({
+
+type: "opponentGoal",
+
+time: getTime()
+
+});
+
+
+renderEvents();
 
 }
 
 
-/* =========================
-   SUBSTITUTION
-========================= */
+/* SUBSTITUTION */
 
 function substitution(){
 
-  choosePlayer(
-    "🔴 WHO IS COMING OFF?",
-    function(offPlayer){
+choosePlayer(
+"🔴 WHO IS COMING OFF?",
+function(offPlayer){
 
-      if(!stats[offPlayer].onPitch){
+if(!stats[offPlayer].onPitch){
 
-        alert(
-          offPlayer + " is already off."
-        );
+alert(
+offPlayer + " is already off."
+);
 
-        return;
-
-      }
-
-
-      choosePlayer(
-        "🟢 WHO IS COMING ON?",
-        function(onPlayer){
-
-          if(onPlayer === offPlayer){
-
-            alert(
-              "Choose a different player."
-            );
-
-            return;
-
-          }
-
-
-          if(stats[onPlayer].onPitch){
-
-            alert(
-              onPlayer + " is already on."
-            );
-
-            return;
-
-          }
-
-
-          stats[offPlayer].onPitch = false;
-
-          stats[onPlayer].onPitch = true;
-
-
-          events.push({
-
-            type: "sub",
-
-            off: offPlayer,
-
-            on: onPlayer,
-
-            time: getTime()
-
-          });
-
-
-          renderEvents();
-
-        }
-      );
-
-    }
-  );
+return;
 
 }
 
 
-/* =========================
-   UNDO
-========================= */
+choosePlayer(
+"🟢 WHO IS COMING ON?",
+function(onPlayer){
+
+if(onPlayer === offPlayer){
+
+alert(
+"Choose a different player."
+);
+
+return;
+
+}
+
+
+if(stats[onPlayer].onPitch){
+
+alert(
+onPlayer + " is already on."
+);
+
+return;
+
+}
+
+
+stats[offPlayer].onPitch = false;
+
+stats[onPlayer].onPitch = true;
+
+
+events.push({
+
+type: "sub",
+
+off: offPlayer,
+
+on: onPlayer,
+
+time: getTime()
+
+});
+
+
+renderEvents();
+
+}
+
+);
+
+}
+
+);
+
+}
+
+
+/* UNDO */
 
 function undoLast(){
 
-  if(events.length === 0){
+if(events.length === 0){
 
-    alert("Nothing to undo.");
+alert("Nothing to undo.");
 
-    return;
-
-  }
-
-
-  let event =
-    events.pop();
-
-
-  if(event.type === "goal"){
-
-    ourScore--;
-
-    stats[event.scorer].goals--;
-
-    if(event.assist !== "NONE"){
-
-      stats[event.assist].assists--;
-
-    }
-
-  }
-
-
-  if(event.type === "opponentGoal"){
-
-    oppScore--;
-
-  }
-
-
-  if(event.type === "sub"){
-
-    stats[event.off].onPitch = true;
-
-    stats[event.on].onPitch = false;
-
-  }
-
-
-  document.getElementById("our").textContent =
-    ourScore;
-
-  document.getElementById("opp").textContent =
-    oppScore;
-
-
-  renderEvents();
+return;
 
 }
 
 
-/* =========================
-   SHOW EVENTS
-========================= */
+let event =
+events.pop();
+
+
+if(event.type === "goal"){
+
+ourScore--;
+
+stats[event.scorer].goals--;
+
+if(event.assist !== "NONE"){
+
+stats[event.assist].assists--;
+
+}
+
+}
+
+
+if(event.type === "opponentGoal"){
+
+oppScore--;
+
+}
+
+
+if(event.type === "sub"){
+
+stats[event.off].onPitch = true;
+
+stats[event.on].onPitch = false;
+
+}
+
+
+document.getElementById("our").textContent =
+ourScore;
+
+document.getElementById("opp").textContent =
+oppScore;
+
+
+renderEvents();
+
+}
+
+
+/* EVENTS */
 
 function renderEvents(){
 
-  let container =
-    document.getElementById("events");
+let container =
+document.getElementById("events");
 
-  container.innerHTML = "";
-
-
-  events.forEach(function(event){
-
-    let div =
-      document.createElement("div");
-
-    div.className = "event";
+container.innerHTML = "";
 
 
-    if(event.type === "goal"){
+events.forEach(function(event){
 
-      div.textContent =
-        "⚽ " +
-        event.time +
-        " — " +
-        event.scorer +
-        (
-          event.assist !== "NONE"
-          ? " (assist: " + event.assist + ")"
-          : ""
-        );
+let div =
+document.createElement("div");
 
-    }
+div.className = "event";
 
 
-    if(event.type === "opponentGoal"){
+if(event.type === "goal"){
 
-      div.textContent =
-        "🔴 " +
-        event.time +
-        " — Opposition goal";
-
-    }
-
-
-    if(event.type === "sub"){
-
-      div.textContent =
-        "🔄 " +
-        event.time +
-        " — " +
-        event.off +
-        " OFF / " +
-        event.on +
-        " ON";
-
-    }
-
-
-    container.appendChild(div);
-
-  });
+div.textContent =
+"⚽ " +
+event.time +
+" — " +
+event.scorer +
+(
+event.assist !== "NONE"
+? " (assist: " + event.assist + ")"
+: ""
+);
 
 }
 
 
-/* =========================
-   FULL TIME
-========================= */
+if(event.type === "opponentGoal"){
+
+div.textContent =
+"🔴 " +
+event.time +
+" — Opposition goal";
+
+}
+
+
+if(event.type === "sub"){
+
+div.textContent =
+"🔄 " +
+event.time +
+" — " +
+event.off +
+" OFF / " +
+event.on +
+" ON";
+
+}
+
+
+container.appendChild(div);
+
+});
+
+}
+
+
+/* FULL TIME */
 
 function fullTime(){
 
-  pauseClock();
+pauseClock();
 
-  calculateMinutes();
-
-
-  alert(
-    "FULL TIME\n\n" +
-    "Arniston Rangers " +
-    ourScore +
-    " - " +
-    oppScore +
-    " " +
-    opponent
-  );
+calculateMinutes();
 
 
-  renderFinalStats();
+alert(
+"FULL TIME\n\n" +
+"Arniston Rangers " +
+ourScore +
+" - " +
+oppScore +
+" " +
+opponent
+);
+
+
+renderFinalStats();
 
 }
 
 
-/* =========================
-   PLAYER MINUTES
-========================= */
+/* MINUTES */
 
 function calculateMinutes(){
 
-  let totalMinutes =
-    Math.round(matchSeconds / 60);
+let totalMinutes =
+Math.round(matchSeconds / 60);
 
 
-  players.forEach(function(player){
+players.forEach(function(player){
 
-    if(stats[player].onPitch){
+if(stats[player].onPitch){
 
-      stats[player].minutes =
-        totalMinutes;
+stats[player].minutes =
+totalMinutes;
 
-    }
+}
 
-  });
+});
 
 }
 
 
-/* =========================
-   FINAL STATS
-========================= */
+/* FINAL STATS */
 
 function renderFinalStats(){
 
-  let container =
-    document.getElementById("events");
+let container =
+document.getElementById("events");
+
+let html =
+"<h2>Player Stats</h2>";
 
 
-  let html =
-    "<h2>Player Stats</h2>";
+players.forEach(function(player){
+
+html +=
+
+"<div class='stats-row'>" +
+
+"<span>" +
+player +
+"</span>" +
+
+"<span>" +
+
+stats[player].goals +
+"G " +
+
+stats[player].assists +
+"A " +
+
+stats[player].minutes +
+"m" +
+
+"</span>" +
+
+"</div>";
+
+});
 
 
-  players.forEach(function(player){
-
-    html +=
-
-      "<div class='stats-row'>" +
-
-      "<span>" +
-      player +
-      "</span>" +
-
-      "<span>" +
-
-      stats[player].goals +
-      "G " +
-
-      stats[player].assists +
-      "A " +
-
-      stats[player].minutes +
-      "m" +
-
-      "</span>" +
-
-      "</div>";
-
-  });
-
-
-  container.innerHTML += html;
+container.innerHTML += html;
 
 }
 
 
-/* =========================
-   MAKE SURE POPUP IS CLOSED
-   WHEN APP LOADS
-========================= */
+/* MAKE SURE POPUP STARTS CLOSED */
 
-document.addEventListener(
-  "DOMContentLoaded",
-  function(){
+window.onload = function(){
 
-    document.getElementById("modal").style.display =
-      "none";
+let modal =
+document.getElementById("modal");
 
-  }
-);
+modal.classList.add("hidden");
+
+modal.style.display = "none";
+
+};
 
 </script>
 
