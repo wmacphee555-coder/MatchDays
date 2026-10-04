@@ -1,124 +1,69 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>MatchDay</title>
 
 <style>
-* {
-  box-sizing: border-box;
+*{box-sizing:border-box}
+body{
+margin:0;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+background:#f3f4f6;
+color:#111827
 }
-
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background: #f2f4f7;
-  color: #111827;
+.app{
+max-width:520px;
+margin:auto;
+padding:25px 16px 40px
 }
-
-.app {
-  max-width: 500px;
-  margin: auto;
-  padding: 25px 16px 40px;
+h1{text-align:center;font-size:36px;margin:5px}
+.subtitle{text-align:center;color:#6b7280;margin-bottom:25px}
+.card{
+background:white;
+border-radius:18px;
+padding:20px;
+margin-bottom:15px;
+box-shadow:0 3px 12px rgba(0,0,0,.08)
 }
-
-h1 {
-  text-align: center;
-  font-size: 36px;
-  margin-bottom: 5px;
+button{
+width:100%;
+border:0;
+border-radius:14px;
+padding:16px;
+margin-top:10px;
+font-size:17px;
+font-weight:bold;
+background:#111827;
+color:white
 }
-
-.subtitle {
-  text-align: center;
-  color: #6b7280;
-  margin-bottom: 25px;
+.secondary{background:#e5e7eb!important;color:#111827}
+.green{background:#15803d}
+.blue{background:#2563eb}
+.red{background:#b91c1c}
+input{
+width:100%;
+padding:14px;
+border:1px solid #d1d5db;
+border-radius:12px;
+font-size:17px;
+margin-top:8px
 }
-
-.card {
-  background: white;
-  border-radius: 18px;
-  padding: 20px;
-  margin-bottom: 15px;
-  box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+.hidden{display:none}
+.score{text-align:center;font-size:58px;font-weight:bold}
+.timer{text-align:center;font-size:25px;margin-bottom:15px}
+.player{
+display:flex;
+justify-content:space-between;
+padding:13px 0;
+border-bottom:1px solid #eee
 }
-
-button {
-  width: 100%;
-  border: none;
-  border-radius: 14px;
-  padding: 16px;
-  margin-top: 10px;
-  font-size: 17px;
-  font-weight: bold;
-  background: #111827;
-  color: white;
-}
-
-button.secondary {
-  background: #e5e7eb;
-  color: #111827;
-}
-
-button.goal {
-  background: #15803d;
-  font-size: 22px;
-}
-
-button.sub {
-  background: #2563eb;
-  font-size: 20px;
-}
-
-input {
-  width: 100%;
-  padding: 14px;
-  border: 1px solid #d1d5db;
-  border-radius: 12px;
-  font-size: 17px;
-  margin-top: 8px;
-}
-
-.hidden {
-  display: none;
-}
-
-.score {
-  text-align: center;
-  font-size: 58px;
-  font-weight: bold;
-}
-
-.timer {
-  text-align: center;
-  font-size: 25px;
-  margin-bottom: 15px;
-  font-variant-numeric: tabular-nums;
-}
-
-.player {
-  display: flex;
-  justify-content: space-between;
-  padding: 13px 0;
-  border-bottom: 1px solid #eee;
-}
-
-.player button {
-  width: auto;
-  padding: 8px 12px;
-  margin: 0;
-  font-size: 14px;
-}
-
-.event {
-  padding: 10px;
-  background: #f3f4f6;
-  border-radius: 10px;
-  margin-top: 7px;
-}
-
-.back {
-  margin-top: 20px;
+.event{
+padding:11px;
+background:#f3f4f6;
+border-radius:10px;
+margin-top:7px
 }
 </style>
 </head>
@@ -130,13 +75,11 @@ input {
 <h1>MatchDay ⚽</h1>
 <div class="subtitle">Arniston Rangers U9 / U10</div>
 
-<!-- HOME -->
-
 <div id="home">
 
 <div class="card">
 
-<button onclick="showNewMatch()">+ NEW MATCH</button>
+<button onclick="newMatch()">➕ NEW MATCH</button>
 
 <button class="secondary" onclick="showStats()">
 📊 SEASON STATS
@@ -147,79 +90,57 @@ input {
 </button>
 
 </div>
-
 </div>
 
 
-<!-- NEW MATCH -->
-
-<div id="newMatch" class="hidden">
+<div id="new" class="hidden">
 
 <div class="card">
 
 <h2>New Match</h2>
 
 <label>Opponent</label>
-
 <input id="opponent" placeholder="Enter opponent">
 
 <h3>Players Available</h3>
 
-<div id="playerList"></div>
+<div id="players"></div>
 
-<button onclick="startMatch()">
-START MATCH
-</button>
+<button onclick="startMatch()">START MATCH</button>
 
-<button class="secondary" onclick="goHome()">
-BACK
-</button>
+<button class="secondary" onclick="home()">BACK</button>
 
 </div>
-
 </div>
 
 
-<!-- LIVE MATCH -->
-
-<div id="liveMatch" class="hidden">
+<div id="match" class="hidden">
 
 <div class="card">
 
-<h2 id="matchTitle" style="text-align:center"></h2>
+<h2 id="title" style="text-align:center"></h2>
 
 <div class="score">
-<span id="homeScore">0</span>
+<span id="our">0</span>
 -
-<span id="awayScore">0</span>
+<span id="opp">0</span>
 </div>
 
-<div class="timer" id="timer">
-00:00
-</div>
+<div class="timer" id="timer">00:00</div>
 
-<button class="goal" onclick="recordGoal()">
-⚽ GOAL
-</button>
+<button class="green" onclick="goal()">⚽ GOAL</button>
 
-<button class="sub" onclick="makeSubstitution()">
-🔄 SUBSTITUTION
-</button>
+<button class="blue" onclick="substitution()">🔄 SUBSTITUTION</button>
 
 <h3>Match Events</h3>
 
 <div id="events"></div>
 
-<button onclick="finishMatch()">
-FULL TIME
-</button>
+<button class="red" onclick="fullTime()">🏁 FULL TIME</button>
 
 </div>
-
 </div>
 
-
-<!-- STATS -->
 
 <div id="stats" class="hidden">
 
@@ -229,16 +150,11 @@ FULL TIME
 
 <div id="statsList"></div>
 
-<button class="secondary" onclick="goHome()">
-BACK
-</button>
+<button class="secondary" onclick="home()">BACK</button>
 
 </div>
-
 </div>
 
-
-<!-- HISTORY -->
 
 <div id="history" class="hidden">
 
@@ -248,12 +164,9 @@ BACK
 
 <div id="historyList"></div>
 
-<button class="secondary" onclick="goHome()">
-BACK
-</button>
+<button class="secondary" onclick="home()">BACK</button>
 
 </div>
-
 </div>
 
 </div>
@@ -261,298 +174,264 @@ BACK
 
 <script>
 
-const players = [
-"Harry",
-"Jack",
+const players=[
+"Finley",
 "William",
-"Kai",
-"Findlay",
+"Jax",
+"Aahill",
+"Aiden",
 "Matthew",
-"Fyfe",
-"Adam",
-"Elliot",
-"Sonny"
+"Leo",
+"Kai",
+"Fyfe"
 ];
 
-let availablePlayers = [];
-
-let opponent = "";
-
-let homeScore = 0;
-
-let awayScore = 0;
-
-let matchEvents = [];
-
-let matchStart;
-
+let available=[];
+let opponent="";
+let ourScore=0;
+let oppScore=0;
+let events=[];
+let startTime;
 let timerInterval;
 
+let stats=
+JSON.parse(localStorage.getItem("matchdayStats")||"{}");
 
-let stats =
-JSON.parse(localStorage.getItem("matchDayStats")) || {};
-
-let history =
-JSON.parse(localStorage.getItem("matchDayHistory")) || [];
+let history=
+JSON.parse(localStorage.getItem("matchdayHistory")||"[]");
 
 
-function hideAll() {
-
+function hideAll(){
 document.getElementById("home").classList.add("hidden");
-
-document.getElementById("newMatch").classList.add("hidden");
-
-document.getElementById("liveMatch").classList.add("hidden");
-
+document.getElementById("new").classList.add("hidden");
+document.getElementById("match").classList.add("hidden");
 document.getElementById("stats").classList.add("hidden");
-
 document.getElementById("history").classList.add("hidden");
-
 }
 
 
-function goHome() {
-
+function home(){
 hideAll();
-
 document.getElementById("home").classList.remove("hidden");
-
 }
 
 
-function showNewMatch() {
+function newMatch(){
 
 hideAll();
 
-document.getElementById("newMatch").classList.remove("hidden");
+document.getElementById("new").classList.remove("hidden");
 
-renderPlayers();
+document.getElementById("players").innerHTML=
 
-}
+players.map((p,i)=>`
 
-
-function renderPlayers() {
-
-let list = "";
-
-players.forEach((player, index) => {
-
-list += `
 <div class="player">
 
 <label>
 
 <input
 type="checkbox"
-id="player${index}"
+id="p${i}"
 checked
 style="width:auto"
 >
 
-${player}
+${p}
 
 </label>
 
 </div>
-`;
 
-});
-
-document.getElementById("playerList").innerHTML = list;
+`).join("");
 
 }
 
 
-function startMatch() {
+function startMatch(){
 
-opponent =
+opponent=
 document.getElementById("opponent").value.trim();
 
-if (!opponent) {
-
-alert("Enter the opponent first.");
-
+if(!opponent){
+alert("Please enter the opponent.");
 return;
-
 }
 
-availablePlayers = [];
+available=[];
 
-players.forEach((player, index) => {
+players.forEach((p,i)=>{
 
-if (
-document.getElementById("player" + index).checked
-) {
-
-availablePlayers.push(player);
-
+if(document.getElementById("p"+i).checked){
+available.push(p);
 }
 
 });
 
+ourScore=0;
+oppScore=0;
+events=[];
 
-homeScore = 0;
+document.getElementById("our").textContent=0;
+document.getElementById("opp").textContent=0;
 
-awayScore = 0;
+document.getElementById("title").textContent=
+"Arniston Rangers vs "+opponent;
 
-matchEvents = [];
+document.getElementById("events").innerHTML="";
 
-document.getElementById("homeScore").textContent = "0";
-
-document.getElementById("awayScore").textContent = "0";
-
-document.getElementById("matchTitle").textContent =
-"Arniston Rangers vs " + opponent;
-
-document.getElementById("events").innerHTML = "";
-
-matchStart = Date.now();
+startTime=Date.now();
 
 clearInterval(timerInterval);
 
-timerInterval = setInterval(updateTimer,1000);
+timerInterval=setInterval(updateTimer,1000);
 
 hideAll();
 
-document.getElementById("liveMatch").classList.remove("hidden");
+document.getElementById("match").classList.remove("hidden");
 
 }
 
 
-function updateTimer() {
+function updateTimer(){
 
-let seconds =
-Math.floor((Date.now() - matchStart) / 1000);
+let seconds=
+Math.floor((Date.now()-startTime)/1000);
 
-let minutes =
-Math.floor(seconds / 60);
+let mins=Math.floor(seconds/60);
 
-seconds =
-seconds % 60;
+let secs=seconds%60;
 
-document.getElementById("timer").textContent =
-String(minutes).padStart(2,"0")
+document.getElementById("timer").textContent=
+
+String(mins).padStart(2,"0")
 +
 ":"
 +
-String(seconds).padStart(2,"0");
+String(secs).padStart(2,"0");
 
 }
 
 
-function recordGoal() {
+function goal(){
 
-if (availablePlayers.length === 0) {
+let choice=
+prompt(
+"Who scored?\n\n"+
+"Type ARNISTON or OPPONENT"
+);
 
-alert("No players selected.");
+if(!choice)return;
+
+choice=choice.toLowerCase();
+
+
+if(choice==="opponent"){
+
+oppScore++;
+
+document.getElementById("opp").textContent=oppScore;
+
+events.push({
+type:"opponentGoal"
+});
+
+renderEvents();
 
 return;
 
 }
 
-let scorer =
+
+if(choice==="arniston"){
+
+let scorer=
 prompt(
-"Who scored?\n\n" +
-availablePlayers.join("\n")
+"Who scored?\n\n"+
+available.join("\n")
 );
 
-if (!scorer) return;
+if(!scorer)return;
 
-if (!availablePlayers.includes(scorer)) {
+if(!available.includes(scorer)){
 
-alert("Please enter a player exactly as shown.");
+alert("Player name not recognised.");
 
 return;
 
 }
 
 
-let assist =
+let assist=
 prompt(
-"Assist from? Type None if there was no assist.\n\n" +
-availablePlayers.join("\n")
+"Assist? Type NONE if there wasn't one.\n\n"+
+available.join("\n")
 );
 
-if (!assist) assist = "None";
+if(!assist)assist="NONE";
+
+ourScore++;
+
+document.getElementById("our").textContent=ourScore;
 
 
-homeScore++;
-
-document.getElementById("homeScore").textContent =
-homeScore;
-
-
-matchEvents.push({
-
-type: "goal",
-
-scorer: scorer,
-
-assist: assist
-
+events.push({
+type:"goal",
+scorer:scorer,
+assist:assist
 });
 
 
-if (!stats[scorer]) {
-
-stats[scorer] = {
-goals: 0,
-assists: 0,
-appearances: 0,
-minutes: 0
+if(!stats[scorer]){
+stats[scorer]={
+goals:0,
+assists:0,
+minutes:0,
+appearances:0
 };
-
 }
 
 stats[scorer].goals++;
 
 
-if (
-assist !== "None" &&
-availablePlayers.includes(assist)
-) {
+if(
+assist!=="NONE" &&
+available.includes(assist)
+){
 
-if (!stats[assist]) {
-
-stats[assist] = {
-goals: 0,
-assists: 0,
-appearances: 0,
-minutes: 0
+if(!stats[assist]){
+stats[assist]={
+goals:0,
+assists:0,
+minutes:0,
+appearances:0
 };
-
 }
 
 stats[assist].assists++;
 
 }
 
-
 renderEvents();
 
 }
 
-
-function makeSubstitution() {
-
-if (availablePlayers.length === 0) {
-
-alert("No players available.");
-
-return;
-
 }
 
-let off =
+
+function substitution(){
+
+if(available.length===0)return;
+
+let off=
 prompt(
-"Who is coming OFF?\n\n" +
-availablePlayers.join("\n")
+"Who is coming OFF?\n\n"+
+available.join("\n")
 );
 
-if (!off) return;
+if(!off)return;
 
-
-if (!availablePlayers.includes(off)) {
+if(!available.includes(off)){
 
 alert("Player not found.");
 
@@ -561,13 +440,10 @@ return;
 }
 
 
-let bench =
-players.filter(
-player => !availablePlayers.includes(player)
-);
+let bench=
+players.filter(p=>!available.includes(p));
 
-
-if (bench.length === 0) {
+if(bench.length===0){
 
 alert("Everyone is already on the pitch.");
 
@@ -576,16 +452,15 @@ return;
 }
 
 
-let on =
+let on=
 prompt(
-"Who is coming ON?\n\n" +
+"Who is coming ON?\n\n"+
 bench.join("\n")
 );
 
-if (!on) return;
+if(!on)return;
 
-
-if (!bench.includes(on)) {
+if(!bench.includes(on)){
 
 alert("Player not found.");
 
@@ -594,219 +469,212 @@ return;
 }
 
 
-availablePlayers =
-availablePlayers.filter(
-player => player !== off
-);
+available=
+available.filter(p=>p!==off);
 
-availablePlayers.push(on);
+available.push(on);
 
-
-matchEvents.push({
-
-type: "sub",
-
-off: off,
-
-on: on
-
+events.push({
+type:"sub",
+off:off,
+on:on
 });
-
 
 renderEvents();
 
 }
 
 
-function renderEvents() {
+function renderEvents(){
 
-let html = "";
+let html="";
 
-matchEvents.forEach(event => {
+events.forEach(e=>{
 
-if (event.type === "goal") {
+if(e.type==="goal"){
 
-html += `
+html+=`
+
 <div class="event">
-⚽ <strong>${event.scorer}</strong>
-${event.assist !== "None"
-? " — 🎯 " + event.assist
-: ""}
+⚽ <strong>${e.scorer}</strong>
+${e.assist!=="NONE"
+?" — 🎯 "+e.assist:""}
 </div>
+
 `;
 
 }
 
-if (event.type === "sub") {
+if(e.type==="opponentGoal"){
 
-html += `
+html+=`
+
 <div class="event">
-🔄 ${event.off}
-➡️
-${event.on}
+🔴 Opponent goal
 </div>
+
+`;
+
+}
+
+if(e.type==="sub"){
+
+html+=`
+
+<div class="event">
+🔄 ${e.off} ➡️ ${e.on}
+</div>
+
 `;
 
 }
 
 });
 
-document.getElementById("events").innerHTML = html;
+document.getElementById("events").innerHTML=html;
 
 }
 
 
-function finishMatch() {
+function fullTime(){
 
 clearInterval(timerInterval);
 
-let minutes =
-Math.floor(
-(Date.now() - matchStart) / 60000
-);
+let minutes=
+Math.floor((Date.now()-startTime)/60000);
 
 
-availablePlayers.forEach(player => {
+available.forEach(p=>{
 
-if (!stats[player]) {
+if(!stats[p]){
 
-stats[player] = {
-goals: 0,
-assists: 0,
-appearances: 0,
-minutes: 0
+stats[p]={
+goals:0,
+assists:0,
+minutes:0,
+appearances:0
 };
 
 }
 
-stats[player].appearances++;
+stats[p].appearances++;
 
-stats[player].minutes += minutes;
+stats[p].minutes+=minutes;
 
 });
 
 
 history.unshift({
 
-date: new Date().toLocaleDateString("en-GB"),
+date:new Date().toLocaleDateString("en-GB"),
 
-opponent: opponent,
+opponent:opponent,
 
-score:
-homeScore + " - " + awayScore
+score:ourScore+" - "+oppScore
 
 });
 
 
 localStorage.setItem(
-"matchDayStats",
+"matchdayStats",
 JSON.stringify(stats)
 );
 
 localStorage.setItem(
-"matchDayHistory",
+"matchdayHistory",
 JSON.stringify(history)
 );
 
 
 alert(
-"Full time!\n\n" +
-"Arniston Rangers " +
-homeScore +
-" - " +
-awayScore +
-" " +
+"FULL TIME\n\n"+
+"Arniston Rangers "+
+ourScore+
+" - "+
+oppScore+
+" "+
 opponent
 );
 
-
-goHome();
+home();
 
 }
 
 
-function showStats() {
+function showStats(){
 
 hideAll();
 
 document.getElementById("stats").classList.remove("hidden");
 
-let html = "";
+let html="";
 
-players.forEach(player => {
+players.forEach(p=>{
 
-let s =
-stats[player] || {
+let s=stats[p]||{
 goals:0,
 assists:0,
-appearances:0,
-minutes:0
+minutes:0,
+appearances:0
 };
 
-html += `
+html+=`
+
 <div class="player">
 
-<strong>${player}</strong>
+<strong>${p}</strong>
 
 <span>
 ${s.goals} ⚽
-&nbsp;
 ${s.assists} 🎯
-&nbsp;
-${s.minutes} min
+${Math.round(s.minutes)} min
 </span>
 
 </div>
+
 `;
 
 });
 
-document.getElementById("statsList").innerHTML = html;
+document.getElementById("statsList").innerHTML=html;
 
 }
 
 
-function showHistory() {
+function showHistory(){
 
 hideAll();
 
 document.getElementById("history").classList.remove("hidden");
 
-let html = "";
+if(history.length===0){
 
-if (history.length === 0) {
+document.getElementById("historyList").innerHTML=
+"<p>No matches yet.</p>";
 
-html = "<p>No matches recorded yet.</p>";
-
-} else {
-
-history.forEach(match => {
-
-html += `
-<div class="event">
-
-<strong>
-${match.score}
-</strong>
-
-<br>
-
-vs ${match.opponent}
-
-<br>
-
-<small>
-${match.date}
-</small>
-
-</div>
-`;
-
-});
+return;
 
 }
 
-document.getElementById("historyList").innerHTML = html;
+document.getElementById("historyList").innerHTML=
+
+history.map(m=>`
+
+<div class="event">
+
+<strong>${m.score}</strong>
+
+<br>
+
+vs ${m.opponent}
+
+<br>
+
+<small>${m.date}</small>
+
+</div>
+
+`).join("");
 
 }
 
