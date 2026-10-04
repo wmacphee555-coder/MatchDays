@@ -32,7 +32,7 @@ h1 {
 
 input {
   width: 100%;
-  padding: 16px;
+  padding: 17px;
   font-size: 20px;
   border-radius: 10px;
   border: none;
@@ -87,7 +87,7 @@ button {
 
 .score {
   text-align: center;
-  font-size: 42px;
+  font-size: 46px;
   font-weight: bold;
   margin: 15px 0;
 }
@@ -99,7 +99,7 @@ button {
 }
 
 .hidden {
-  display: none;
+  display: none !important;
 }
 
 .player-grid {
@@ -117,8 +117,7 @@ button {
 .modal {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.85);
-  display: flex;
+  background: rgba(0,0,0,0.88);
   align-items: center;
   justify-content: center;
   padding: 15px;
@@ -138,6 +137,7 @@ button {
 
 .modal-box h2 {
   text-align: center;
+  margin-top: 0;
 }
 
 .cancel {
@@ -148,7 +148,7 @@ button {
 .event {
   background: #222;
   border-radius: 8px;
-  padding: 10px;
+  padding: 11px;
   margin: 6px 0;
 }
 
@@ -162,7 +162,7 @@ button {
 .stats-row {
   display: flex;
   justify-content: space-between;
-  padding: 7px 0;
+  padding: 8px 0;
   border-bottom: 1px solid #444;
 }
 
@@ -177,7 +177,8 @@ button {
 
 <div class="container">
 
-  <!-- SETUP -->
+  <!-- SETUP SCREEN -->
+
   <div id="setup">
 
     <h1>⚽ Arniston Match Day</h1>
@@ -196,10 +197,13 @@ button {
   </div>
 
 
-  <!-- MATCH -->
+  <!-- MATCH SCREEN -->
+
   <div id="match" class="hidden">
 
-    <h1 id="matchTitle">Arniston Rangers</h1>
+    <h1 id="matchTitle">
+      Arniston Rangers
+    </h1>
 
     <div class="score">
       <span id="our">0</span>
@@ -245,7 +249,7 @@ button {
 </div>
 
 
-<!-- PLAYER MODAL -->
+<!-- PLAYER SELECTION POPUP -->
 
 <div id="modal" class="modal hidden">
 
@@ -268,6 +272,10 @@ button {
 
 <script>
 
+/* =========================
+   PLAYERS
+========================= */
+
 const players = [
   "Finley",
   "Kai",
@@ -280,6 +288,10 @@ const players = [
   "Aiden"
 ];
 
+
+/* =========================
+   MATCH DATA
+========================= */
 
 let opponent = "";
 
@@ -294,8 +306,6 @@ let clockInterval = null;
 let events = [];
 
 let stats = {};
-
-let modalCallback = null;
 
 
 /* =========================
@@ -312,27 +322,60 @@ function startMatch(){
     alert("Enter the opponent team.");
 
     return;
+
   }
+
+
+  /* Reset match */
+
+  ourScore = 0;
+  oppScore = 0;
+
+  matchSeconds = 0;
+
+  events = [];
+
+  stats = {};
+
 
   players.forEach(player => {
 
     stats[player] = {
+
       goals: 0,
+
       assists: 0,
+
       minutes: 0,
-      appearances: 0,
-      onPitch: true,
-      lastSubTime: 0
+
+      appearances: 1,
+
+      onPitch: true
+
     };
 
   });
 
-  document.getElementById("setup").classList.add("hidden");
 
-  document.getElementById("match").classList.remove("hidden");
+  document.getElementById("our").textContent = "0";
+
+  document.getElementById("opp").textContent = "0";
+
+  document.getElementById("clock").textContent = "00:00";
+
+  document.getElementById("events").innerHTML = "";
+
+
+  document.getElementById("setup")
+    .classList.add("hidden");
+
+  document.getElementById("match")
+    .classList.remove("hidden");
+
 
   document.getElementById("matchTitle").textContent =
     "Arniston Rangers vs " + opponent;
+
 
   startClock();
 
@@ -349,7 +392,7 @@ function startClock(){
 
   clockRunning = true;
 
-  clockInterval = setInterval(() => {
+  clockInterval = setInterval(function(){
 
     matchSeconds++;
 
@@ -424,7 +467,7 @@ function getTime(){
 
 
 /* =========================
-   MODAL
+   PLAYER POPUP
 ========================= */
 
 function choosePlayer(title, callback){
@@ -437,14 +480,15 @@ function choosePlayer(title, callback){
 
   container.innerHTML = "";
 
-  players.forEach(player => {
+
+  players.forEach(function(player){
 
     let button =
       document.createElement("button");
 
     button.textContent = player;
 
-    button.onclick = () => {
+    button.onclick = function(){
 
       closeModal();
 
@@ -456,18 +500,25 @@ function choosePlayer(title, callback){
 
   });
 
-  document
-    .getElementById("modal")
-    .classList.remove("hidden");
+
+  let modal =
+    document.getElementById("modal");
+
+  modal.classList.remove("hidden");
+
+  modal.style.display = "flex";
 
 }
 
 
 function closeModal(){
 
-  document
-    .getElementById("modal")
-    .classList.add("hidden");
+  let modal =
+    document.getElementById("modal");
+
+  modal.style.display = "none";
+
+  modal.classList.add("hidden");
 
 }
 
@@ -495,10 +546,12 @@ function chooseAssist(scorer){
   document.getElementById("modalTitle").textContent =
     "🎯 ASSIST?";
 
+
   let container =
     document.getElementById("playerButtons");
 
   container.innerHTML = "";
+
 
   let noAssist =
     document.createElement("button");
@@ -506,7 +559,14 @@ function chooseAssist(scorer){
   noAssist.textContent =
     "NO ASSIST";
 
-  noAssist.onclick = () => {
+  noAssist.style.background =
+    "#20c76a";
+
+  noAssist.style.color =
+    "white";
+
+
+  noAssist.onclick = function(){
 
     closeModal();
 
@@ -517,19 +577,22 @@ function chooseAssist(scorer){
 
   };
 
+
   container.appendChild(noAssist);
 
 
-  players.forEach(player => {
+  players.forEach(function(player){
 
     if(player === scorer) return;
+
 
     let button =
       document.createElement("button");
 
     button.textContent = player;
 
-    button.onclick = () => {
+
+    button.onclick = function(){
 
       closeModal();
 
@@ -540,12 +603,17 @@ function chooseAssist(scorer){
 
     };
 
+
     container.appendChild(button);
 
   });
 
 }
 
+
+/* =========================
+   RECORD GOAL
+========================= */
 
 function recordGoal(scorer, assist){
 
@@ -554,15 +622,16 @@ function recordGoal(scorer, assist){
   document.getElementById("our").textContent =
     ourScore;
 
+
   stats[scorer].goals++;
 
-  if(
-    assist !== "NONE"
-  ){
+
+  if(assist !== "NONE"){
 
     stats[assist].assists++;
 
   }
+
 
   events.push({
 
@@ -572,13 +641,10 @@ function recordGoal(scorer, assist){
 
     assist: assist,
 
-    time: getTime(),
-
-    ourScore: ourScore,
-
-    oppScore: oppScore
+    time: getTime()
 
   });
+
 
   renderEvents();
 
@@ -596,17 +662,15 @@ function opponentGoal(){
   document.getElementById("opp").textContent =
     oppScore;
 
+
   events.push({
 
     type: "opponentGoal",
 
-    time: getTime(),
-
-    ourScore: ourScore,
-
-    oppScore: oppScore
+    time: getTime()
 
   });
+
 
   renderEvents();
 
@@ -620,16 +684,19 @@ function opponentGoal(){
 function substitution(){
 
   choosePlayer(
-    "🔄 WHO IS COMING OFF?",
+    "🔴 WHO IS COMING OFF?",
     function(offPlayer){
 
       if(!stats[offPlayer].onPitch){
 
-        alert(offPlayer + " is already off.");
+        alert(
+          offPlayer + " is already off."
+        );
 
         return;
 
       }
+
 
       choosePlayer(
         "🟢 WHO IS COMING ON?",
@@ -637,23 +704,30 @@ function substitution(){
 
           if(onPlayer === offPlayer){
 
-            alert("Choose a different player.");
+            alert(
+              "Choose a different player."
+            );
 
             return;
 
           }
+
 
           if(stats[onPlayer].onPitch){
 
-            alert(onPlayer + " is already on.");
+            alert(
+              onPlayer + " is already on."
+            );
 
             return;
 
           }
+
 
           stats[offPlayer].onPitch = false;
 
           stats[onPlayer].onPitch = true;
+
 
           events.push({
 
@@ -666,6 +740,7 @@ function substitution(){
             time: getTime()
 
           });
+
 
           renderEvents();
 
@@ -692,8 +767,10 @@ function undoLast(){
 
   }
 
+
   let event =
     events.pop();
+
 
   if(event.type === "goal"){
 
@@ -709,11 +786,13 @@ function undoLast(){
 
   }
 
+
   if(event.type === "opponentGoal"){
 
     oppScore--;
 
   }
+
 
   if(event.type === "sub"){
 
@@ -723,11 +802,13 @@ function undoLast(){
 
   }
 
+
   document.getElementById("our").textContent =
     ourScore;
 
   document.getElementById("opp").textContent =
     oppScore;
+
 
   renderEvents();
 
@@ -735,7 +816,7 @@ function undoLast(){
 
 
 /* =========================
-   EVENTS
+   SHOW EVENTS
 ========================= */
 
 function renderEvents(){
@@ -745,12 +826,14 @@ function renderEvents(){
 
   container.innerHTML = "";
 
-  events.forEach(event => {
+
+  events.forEach(function(event){
 
     let div =
       document.createElement("div");
 
     div.className = "event";
+
 
     if(event.type === "goal"){
 
@@ -767,6 +850,7 @@ function renderEvents(){
 
     }
 
+
     if(event.type === "opponentGoal"){
 
       div.textContent =
@@ -775,6 +859,7 @@ function renderEvents(){
         " — Opposition goal";
 
     }
+
 
     if(event.type === "sub"){
 
@@ -788,6 +873,7 @@ function renderEvents(){
         " ON";
 
     }
+
 
     container.appendChild(div);
 
@@ -806,33 +892,39 @@ function fullTime(){
 
   calculateMinutes();
 
-  let message =
+
+  alert(
     "FULL TIME\n\n" +
     "Arniston Rangers " +
     ourScore +
     " - " +
     oppScore +
     " " +
-    opponent;
+    opponent
+  );
 
-  alert(message);
 
   renderFinalStats();
 
 }
 
 
+/* =========================
+   PLAYER MINUTES
+========================= */
+
 function calculateMinutes(){
 
   let totalMinutes =
-    matchSeconds / 60;
+    Math.round(matchSeconds / 60);
 
-  players.forEach(player => {
+
+  players.forEach(function(player){
 
     if(stats[player].onPitch){
 
       stats[player].minutes =
-        Math.round(totalMinutes);
+        totalMinutes;
 
     }
 
@@ -841,34 +933,67 @@ function calculateMinutes(){
 }
 
 
+/* =========================
+   FINAL STATS
+========================= */
+
 function renderFinalStats(){
 
   let container =
     document.getElementById("events");
 
+
   let html =
     "<h2>Player Stats</h2>";
 
-  players.forEach(player => {
+
+  players.forEach(function(player){
 
     html +=
+
       "<div class='stats-row'>" +
-      "<span>" + player + "</span>" +
+
       "<span>" +
+      player +
+      "</span>" +
+
+      "<span>" +
+
       stats[player].goals +
       "G " +
+
       stats[player].assists +
       "A " +
+
       stats[player].minutes +
       "m" +
+
       "</span>" +
+
       "</div>";
 
   });
 
+
   container.innerHTML += html;
 
 }
+
+
+/* =========================
+   MAKE SURE POPUP IS CLOSED
+   WHEN APP LOADS
+========================= */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  function(){
+
+    document.getElementById("modal").style.display =
+      "none";
+
+  }
+);
 
 </script>
 
