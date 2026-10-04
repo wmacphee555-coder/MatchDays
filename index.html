@@ -1,680 +1,872 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>MatchDay</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>Arniston Match Day</title>
 
 <style>
-*{box-sizing:border-box}
-body{
-margin:0;
-font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-background:#f3f4f6;
-color:#111827
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
-.app{
-max-width:520px;
-margin:auto;
-padding:25px 16px 40px
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #111;
+  color: white;
 }
-h1{text-align:center;font-size:36px;margin:5px}
-.subtitle{text-align:center;color:#6b7280;margin-bottom:25px}
-.card{
-background:white;
-border-radius:18px;
-padding:20px;
-margin-bottom:15px;
-box-shadow:0 3px 12px rgba(0,0,0,.08)
+
+.container {
+  max-width: 600px;
+  margin: auto;
+  padding: 15px;
 }
-button{
-width:100%;
-border:0;
-border-radius:14px;
-padding:16px;
-margin-top:10px;
-font-size:17px;
-font-weight:bold;
-background:#111827;
-color:white
+
+h1 {
+  text-align: center;
+  margin: 10px 0 20px;
 }
-.secondary{background:#e5e7eb!important;color:#111827}
-.green{background:#15803d}
-.blue{background:#2563eb}
-.red{background:#b91c1c}
-input{
-width:100%;
-padding:14px;
-border:1px solid #d1d5db;
-border-radius:12px;
-font-size:17px;
-margin-top:8px
+
+input {
+  width: 100%;
+  padding: 16px;
+  font-size: 20px;
+  border-radius: 10px;
+  border: none;
+  margin-bottom: 15px;
 }
-.hidden{display:none}
-.score{text-align:center;font-size:58px;font-weight:bold}
-.timer{text-align:center;font-size:25px;margin-bottom:15px}
-.player{
-display:flex;
-justify-content:space-between;
-padding:13px 0;
-border-bottom:1px solid #eee
+
+button {
+  width: 100%;
+  padding: 18px;
+  margin: 7px 0;
+  border: none;
+  border-radius: 12px;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
 }
-.event{
-padding:11px;
-background:#f3f4f6;
-border-radius:10px;
-margin-top:7px
+
+.start {
+  background: #20c76a;
+  color: white;
+}
+
+.goal {
+  background: #1683ff;
+  color: white;
+}
+
+.oppgoal {
+  background: #e53935;
+  color: white;
+}
+
+.sub {
+  background: #ff9800;
+  color: white;
+}
+
+.pause {
+  background: #555;
+  color: white;
+}
+
+.undo {
+  background: #777;
+  color: white;
+}
+
+.end {
+  background: #8e44ad;
+  color: white;
+}
+
+.score {
+  text-align: center;
+  font-size: 42px;
+  font-weight: bold;
+  margin: 15px 0;
+}
+
+.clock {
+  text-align: center;
+  font-size: 30px;
+  margin: 10px 0 20px;
+}
+
+.hidden {
+  display: none;
+}
+
+.player-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.player-grid button {
+  margin: 0;
+  min-height: 65px;
+  font-size: 18px;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+  z-index: 1000;
+}
+
+.modal-box {
+  background: white;
+  color: #111;
+  width: 100%;
+  max-width: 550px;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 18px;
+  padding: 20px;
+}
+
+.modal-box h2 {
+  text-align: center;
+}
+
+.cancel {
+  background: #555;
+  color: white;
+}
+
+.event {
+  background: #222;
+  border-radius: 8px;
+  padding: 10px;
+  margin: 6px 0;
+}
+
+.stats {
+  background: #222;
+  border-radius: 10px;
+  padding: 12px;
+  margin-top: 15px;
+}
+
+.stats-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 7px 0;
+  border-bottom: 1px solid #444;
+}
+
+.small {
+  font-size: 14px;
+  color: #bbb;
 }
 </style>
 </head>
 
 <body>
 
-<div class="app">
+<div class="container">
 
-<h1>MatchDay ⚽</h1>
-<div class="subtitle">Arniston Rangers U9 / U10</div>
+  <!-- SETUP -->
+  <div id="setup">
 
-<div id="home">
+    <h1>⚽ Arniston Match Day</h1>
 
-<div class="card">
+    <input
+      id="opponentInput"
+      type="text"
+      placeholder="Opponent team"
+      autocomplete="off"
+    >
 
-<button onclick="newMatch()">➕ NEW MATCH</button>
+    <button class="start" onclick="startMatch()">
+      ▶ START MATCH
+    </button>
 
-<button class="secondary" onclick="showStats()">
-📊 SEASON STATS
-</button>
-
-<button class="secondary" onclick="showHistory()">
-📅 MATCH HISTORY
-</button>
-
-</div>
-</div>
+  </div>
 
 
-<div id="new" class="hidden">
+  <!-- MATCH -->
+  <div id="match" class="hidden">
 
-<div class="card">
+    <h1 id="matchTitle">Arniston Rangers</h1>
 
-<h2>New Match</h2>
+    <div class="score">
+      <span id="our">0</span>
+      -
+      <span id="opp">0</span>
+    </div>
 
-<label>Opponent</label>
-<input id="opponent" placeholder="Enter opponent">
+    <div class="clock" id="clock">
+      00:00
+    </div>
 
-<h3>Players Available</h3>
+    <button class="goal" onclick="ourGoal()">
+      ⚽ OUR GOAL
+    </button>
 
-<div id="players"></div>
+    <button class="oppgoal" onclick="opponentGoal()">
+      🔴 OPPOSITION GOAL
+    </button>
 
-<button onclick="startMatch()">START MATCH</button>
+    <button class="sub" onclick="substitution()">
+      🔄 SUBSTITUTION
+    </button>
 
-<button class="secondary" onclick="home()">BACK</button>
+    <button class="pause" onclick="toggleClock()" id="pauseButton">
+      ⏸ PAUSE CLOCK
+    </button>
 
-</div>
-</div>
+    <button class="undo" onclick="undoLast()">
+      ↩ UNDO LAST EVENT
+    </button>
 
+    <button class="end" onclick="fullTime()">
+      🏁 FULL TIME
+    </button>
 
-<div id="match" class="hidden">
+    <div class="stats">
+      <h2>Match Events</h2>
+      <div id="events"></div>
+    </div>
 
-<div class="card">
-
-<h2 id="title" style="text-align:center"></h2>
-
-<div class="score">
-<span id="our">0</span>
--
-<span id="opp">0</span>
-</div>
-
-<div class="timer" id="timer">00:00</div>
-
-<button class="green" onclick="goal()">⚽ GOAL</button>
-
-<button class="blue" onclick="substitution()">🔄 SUBSTITUTION</button>
-
-<h3>Match Events</h3>
-
-<div id="events"></div>
-
-<button class="red" onclick="fullTime()">🏁 FULL TIME</button>
-
-</div>
-</div>
-
-
-<div id="stats" class="hidden">
-
-<div class="card">
-
-<h2>Season Stats</h2>
-
-<div id="statsList"></div>
-
-<button class="secondary" onclick="home()">BACK</button>
+  </div>
 
 </div>
-</div>
 
 
-<div id="history" class="hidden">
+<!-- PLAYER MODAL -->
 
-<div class="card">
+<div id="modal" class="modal hidden">
 
-<h2>Match History</h2>
+  <div class="modal-box">
 
-<div id="historyList"></div>
+    <h2 id="modalTitle">
+      Choose Player
+    </h2>
 
-<button class="secondary" onclick="home()">BACK</button>
+    <div id="playerButtons" class="player-grid"></div>
 
-</div>
-</div>
+    <button class="cancel" onclick="closeModal()">
+      CANCEL
+    </button>
+
+  </div>
 
 </div>
 
 
 <script>
 
-const players=[
-"Finley",
-"William",
-"Jax",
-"Aahill",
-"Aiden",
-"Matthew",
-"Leo",
-"Kai",
-"Fyfe"
+const players = [
+  "Finley",
+  "Kai",
+  "Matthew",
+  "Fyfe",
+  "Jax",
+  "Leo",
+  "Aahill",
+  "William",
+  "Aiden"
 ];
 
-let available=[];
-let opponent="";
-let ourScore=0;
-let oppScore=0;
-let events=[];
-let startTime;
-let timerInterval;
 
-let stats=
-JSON.parse(localStorage.getItem("matchdayStats")||"{}");
+let opponent = "";
 
-let history=
-JSON.parse(localStorage.getItem("matchdayHistory")||"[]");
+let ourScore = 0;
+let oppScore = 0;
 
+let matchSeconds = 0;
 
-function hideAll(){
-document.getElementById("home").classList.add("hidden");
-document.getElementById("new").classList.add("hidden");
-document.getElementById("match").classList.add("hidden");
-document.getElementById("stats").classList.add("hidden");
-document.getElementById("history").classList.add("hidden");
-}
+let clockRunning = false;
+let clockInterval = null;
+
+let events = [];
+
+let stats = {};
+
+let modalCallback = null;
 
 
-function home(){
-hideAll();
-document.getElementById("home").classList.remove("hidden");
-}
-
-
-function newMatch(){
-
-hideAll();
-
-document.getElementById("new").classList.remove("hidden");
-
-document.getElementById("players").innerHTML=
-
-players.map((p,i)=>`
-
-<div class="player">
-
-<label>
-
-<input
-type="checkbox"
-id="p${i}"
-checked
-style="width:auto"
->
-
-${p}
-
-</label>
-
-</div>
-
-`).join("");
-
-}
-
+/* =========================
+   START MATCH
+========================= */
 
 function startMatch(){
 
-opponent=
-document.getElementById("opponent").value.trim();
+  opponent =
+    document.getElementById("opponentInput").value.trim();
 
-if(!opponent){
-alert("Please enter the opponent.");
-return;
-}
+  if(!opponent){
 
-available=[];
+    alert("Enter the opponent team.");
 
-players.forEach((p,i)=>{
+    return;
+  }
 
-if(document.getElementById("p"+i).checked){
-available.push(p);
-}
+  players.forEach(player => {
 
-});
+    stats[player] = {
+      goals: 0,
+      assists: 0,
+      minutes: 0,
+      appearances: 0,
+      onPitch: true,
+      lastSubTime: 0
+    };
 
-ourScore=0;
-oppScore=0;
-events=[];
+  });
 
-document.getElementById("our").textContent=0;
-document.getElementById("opp").textContent=0;
+  document.getElementById("setup").classList.add("hidden");
 
-document.getElementById("title").textContent=
-"Arniston Rangers vs "+opponent;
+  document.getElementById("match").classList.remove("hidden");
 
-document.getElementById("events").innerHTML="";
+  document.getElementById("matchTitle").textContent =
+    "Arniston Rangers vs " + opponent;
 
-startTime=Date.now();
-
-clearInterval(timerInterval);
-
-timerInterval=setInterval(updateTimer,1000);
-
-hideAll();
-
-document.getElementById("match").classList.remove("hidden");
+  startClock();
 
 }
 
 
-function updateTimer(){
+/* =========================
+   CLOCK
+========================= */
 
-let seconds=
-Math.floor((Date.now()-startTime)/1000);
+function startClock(){
 
-let mins=Math.floor(seconds/60);
+  if(clockRunning) return;
 
-let secs=seconds%60;
+  clockRunning = true;
 
-document.getElementById("timer").textContent=
+  clockInterval = setInterval(() => {
 
-String(mins).padStart(2,"0")
-+
-":"
-+
-String(secs).padStart(2,"0");
+    matchSeconds++;
 
-}
+    updateClock();
 
-
-function goal(){
-
-let choice=
-prompt(
-"Who scored?\n\n"+
-"Type ARNISTON or OPPONENT"
-);
-
-if(!choice)return;
-
-choice=choice.toLowerCase();
-
-
-if(choice==="opponent"){
-
-oppScore++;
-
-document.getElementById("opp").textContent=oppScore;
-
-events.push({
-type:"opponentGoal"
-});
-
-renderEvents();
-
-return;
+  },1000);
 
 }
 
 
-if(choice==="arniston"){
+function pauseClock(){
 
-let scorer=
-prompt(
-"Who scored?\n\n"+
-available.join("\n")
-);
+  clockRunning = false;
 
-if(!scorer)return;
-
-if(!available.includes(scorer)){
-
-alert("Player name not recognised.");
-
-return;
+  clearInterval(clockInterval);
 
 }
 
 
-let assist=
-prompt(
-"Assist? Type NONE if there wasn't one.\n\n"+
-available.join("\n")
-);
+function toggleClock(){
 
-if(!assist)assist="NONE";
+  if(clockRunning){
 
-ourScore++;
+    pauseClock();
 
-document.getElementById("our").textContent=ourScore;
+    document.getElementById("pauseButton").textContent =
+      "▶ RESUME CLOCK";
 
+  }else{
 
-events.push({
-type:"goal",
-scorer:scorer,
-assist:assist
-});
+    startClock();
 
+    document.getElementById("pauseButton").textContent =
+      "⏸ PAUSE CLOCK";
 
-if(!stats[scorer]){
-stats[scorer]={
-goals:0,
-assists:0,
-minutes:0,
-appearances:0
-};
-}
-
-stats[scorer].goals++;
-
-
-if(
-assist!=="NONE" &&
-available.includes(assist)
-){
-
-if(!stats[assist]){
-stats[assist]={
-goals:0,
-assists:0,
-minutes:0,
-appearances:0
-};
-}
-
-stats[assist].assists++;
+  }
 
 }
 
-renderEvents();
+
+function updateClock(){
+
+  let minutes =
+    Math.floor(matchSeconds / 60);
+
+  let seconds =
+    matchSeconds % 60;
+
+  document.getElementById("clock").textContent =
+    String(minutes).padStart(2,"0") +
+    ":" +
+    String(seconds).padStart(2,"0");
 
 }
 
+
+function getTime(){
+
+  let minutes =
+    Math.floor(matchSeconds / 60);
+
+  let seconds =
+    matchSeconds % 60;
+
+  return (
+    String(minutes).padStart(2,"0") +
+    ":" +
+    String(seconds).padStart(2,"0")
+  );
+
 }
 
+
+/* =========================
+   MODAL
+========================= */
+
+function choosePlayer(title, callback){
+
+  document.getElementById("modalTitle").textContent =
+    title;
+
+  let container =
+    document.getElementById("playerButtons");
+
+  container.innerHTML = "";
+
+  players.forEach(player => {
+
+    let button =
+      document.createElement("button");
+
+    button.textContent = player;
+
+    button.onclick = () => {
+
+      closeModal();
+
+      callback(player);
+
+    };
+
+    container.appendChild(button);
+
+  });
+
+  document
+    .getElementById("modal")
+    .classList.remove("hidden");
+
+}
+
+
+function closeModal(){
+
+  document
+    .getElementById("modal")
+    .classList.add("hidden");
+
+}
+
+
+/* =========================
+   OUR GOAL
+========================= */
+
+function ourGoal(){
+
+  choosePlayer(
+    "⚽ WHO SCORED?",
+    function(scorer){
+
+      chooseAssist(scorer);
+
+    }
+  );
+
+}
+
+
+function chooseAssist(scorer){
+
+  document.getElementById("modalTitle").textContent =
+    "🎯 ASSIST?";
+
+  let container =
+    document.getElementById("playerButtons");
+
+  container.innerHTML = "";
+
+  let noAssist =
+    document.createElement("button");
+
+  noAssist.textContent =
+    "NO ASSIST";
+
+  noAssist.onclick = () => {
+
+    closeModal();
+
+    recordGoal(
+      scorer,
+      "NONE"
+    );
+
+  };
+
+  container.appendChild(noAssist);
+
+
+  players.forEach(player => {
+
+    if(player === scorer) return;
+
+    let button =
+      document.createElement("button");
+
+    button.textContent = player;
+
+    button.onclick = () => {
+
+      closeModal();
+
+      recordGoal(
+        scorer,
+        player
+      );
+
+    };
+
+    container.appendChild(button);
+
+  });
+
+}
+
+
+function recordGoal(scorer, assist){
+
+  ourScore++;
+
+  document.getElementById("our").textContent =
+    ourScore;
+
+  stats[scorer].goals++;
+
+  if(
+    assist !== "NONE"
+  ){
+
+    stats[assist].assists++;
+
+  }
+
+  events.push({
+
+    type: "goal",
+
+    scorer: scorer,
+
+    assist: assist,
+
+    time: getTime(),
+
+    ourScore: ourScore,
+
+    oppScore: oppScore
+
+  });
+
+  renderEvents();
+
+}
+
+
+/* =========================
+   OPPOSITION GOAL
+========================= */
+
+function opponentGoal(){
+
+  oppScore++;
+
+  document.getElementById("opp").textContent =
+    oppScore;
+
+  events.push({
+
+    type: "opponentGoal",
+
+    time: getTime(),
+
+    ourScore: ourScore,
+
+    oppScore: oppScore
+
+  });
+
+  renderEvents();
+
+}
+
+
+/* =========================
+   SUBSTITUTION
+========================= */
 
 function substitution(){
 
-if(available.length===0)return;
+  choosePlayer(
+    "🔄 WHO IS COMING OFF?",
+    function(offPlayer){
 
-let off=
-prompt(
-"Who is coming OFF?\n\n"+
-available.join("\n")
-);
+      if(!stats[offPlayer].onPitch){
 
-if(!off)return;
+        alert(offPlayer + " is already off.");
 
-if(!available.includes(off)){
+        return;
 
-alert("Player not found.");
+      }
 
-return;
+      choosePlayer(
+        "🟢 WHO IS COMING ON?",
+        function(onPlayer){
+
+          if(onPlayer === offPlayer){
+
+            alert("Choose a different player.");
+
+            return;
+
+          }
+
+          if(stats[onPlayer].onPitch){
+
+            alert(onPlayer + " is already on.");
+
+            return;
+
+          }
+
+          stats[offPlayer].onPitch = false;
+
+          stats[onPlayer].onPitch = true;
+
+          events.push({
+
+            type: "sub",
+
+            off: offPlayer,
+
+            on: onPlayer,
+
+            time: getTime()
+
+          });
+
+          renderEvents();
+
+        }
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================
+   UNDO
+========================= */
+
+function undoLast(){
+
+  if(events.length === 0){
+
+    alert("Nothing to undo.");
+
+    return;
+
+  }
+
+  let event =
+    events.pop();
+
+  if(event.type === "goal"){
+
+    ourScore--;
+
+    stats[event.scorer].goals--;
+
+    if(event.assist !== "NONE"){
+
+      stats[event.assist].assists--;
+
+    }
+
+  }
+
+  if(event.type === "opponentGoal"){
+
+    oppScore--;
+
+  }
+
+  if(event.type === "sub"){
+
+    stats[event.off].onPitch = true;
+
+    stats[event.on].onPitch = false;
+
+  }
+
+  document.getElementById("our").textContent =
+    ourScore;
+
+  document.getElementById("opp").textContent =
+    oppScore;
+
+  renderEvents();
 
 }
 
 
-let bench=
-players.filter(p=>!available.includes(p));
-
-if(bench.length===0){
-
-alert("Everyone is already on the pitch.");
-
-return;
-
-}
-
-
-let on=
-prompt(
-"Who is coming ON?\n\n"+
-bench.join("\n")
-);
-
-if(!on)return;
-
-if(!bench.includes(on)){
-
-alert("Player not found.");
-
-return;
-
-}
-
-
-available=
-available.filter(p=>p!==off);
-
-available.push(on);
-
-events.push({
-type:"sub",
-off:off,
-on:on
-});
-
-renderEvents();
-
-}
-
+/* =========================
+   EVENTS
+========================= */
 
 function renderEvents(){
 
-let html="";
+  let container =
+    document.getElementById("events");
 
-events.forEach(e=>{
+  container.innerHTML = "";
 
-if(e.type==="goal"){
+  events.forEach(event => {
 
-html+=`
+    let div =
+      document.createElement("div");
 
-<div class="event">
-⚽ <strong>${e.scorer}</strong>
-${e.assist!=="NONE"
-?" — 🎯 "+e.assist:""}
-</div>
+    div.className = "event";
 
-`;
+    if(event.type === "goal"){
+
+      div.textContent =
+        "⚽ " +
+        event.time +
+        " — " +
+        event.scorer +
+        (
+          event.assist !== "NONE"
+          ? " (assist: " + event.assist + ")"
+          : ""
+        );
+
+    }
+
+    if(event.type === "opponentGoal"){
+
+      div.textContent =
+        "🔴 " +
+        event.time +
+        " — Opposition goal";
+
+    }
+
+    if(event.type === "sub"){
+
+      div.textContent =
+        "🔄 " +
+        event.time +
+        " — " +
+        event.off +
+        " OFF / " +
+        event.on +
+        " ON";
+
+    }
+
+    container.appendChild(div);
+
+  });
 
 }
 
-if(e.type==="opponentGoal"){
 
-html+=`
-
-<div class="event">
-🔴 Opponent goal
-</div>
-
-`;
-
-}
-
-if(e.type==="sub"){
-
-html+=`
-
-<div class="event">
-🔄 ${e.off} ➡️ ${e.on}
-</div>
-
-`;
-
-}
-
-});
-
-document.getElementById("events").innerHTML=html;
-
-}
-
+/* =========================
+   FULL TIME
+========================= */
 
 function fullTime(){
 
-clearInterval(timerInterval);
+  pauseClock();
 
-let minutes=
-Math.floor((Date.now()-startTime)/60000);
+  calculateMinutes();
 
+  let message =
+    "FULL TIME\n\n" +
+    "Arniston Rangers " +
+    ourScore +
+    " - " +
+    oppScore +
+    " " +
+    opponent;
 
-available.forEach(p=>{
+  alert(message);
 
-if(!stats[p]){
-
-stats[p]={
-goals:0,
-assists:0,
-minutes:0,
-appearances:0
-};
-
-}
-
-stats[p].appearances++;
-
-stats[p].minutes+=minutes;
-
-});
-
-
-history.unshift({
-
-date:new Date().toLocaleDateString("en-GB"),
-
-opponent:opponent,
-
-score:ourScore+" - "+oppScore
-
-});
-
-
-localStorage.setItem(
-"matchdayStats",
-JSON.stringify(stats)
-);
-
-localStorage.setItem(
-"matchdayHistory",
-JSON.stringify(history)
-);
-
-
-alert(
-"FULL TIME\n\n"+
-"Arniston Rangers "+
-ourScore+
-" - "+
-oppScore+
-" "+
-opponent
-);
-
-home();
+  renderFinalStats();
 
 }
 
 
-function showStats(){
+function calculateMinutes(){
 
-hideAll();
+  let totalMinutes =
+    matchSeconds / 60;
 
-document.getElementById("stats").classList.remove("hidden");
+  players.forEach(player => {
 
-let html="";
+    if(stats[player].onPitch){
 
-players.forEach(p=>{
+      stats[player].minutes =
+        Math.round(totalMinutes);
 
-let s=stats[p]||{
-goals:0,
-assists:0,
-minutes:0,
-appearances:0
-};
+    }
 
-html+=`
-
-<div class="player">
-
-<strong>${p}</strong>
-
-<span>
-${s.goals} ⚽
-${s.assists} 🎯
-${Math.round(s.minutes)} min
-</span>
-
-</div>
-
-`;
-
-});
-
-document.getElementById("statsList").innerHTML=html;
+  });
 
 }
 
 
-function showHistory(){
+function renderFinalStats(){
 
-hideAll();
+  let container =
+    document.getElementById("events");
 
-document.getElementById("history").classList.remove("hidden");
+  let html =
+    "<h2>Player Stats</h2>";
 
-if(history.length===0){
+  players.forEach(player => {
 
-document.getElementById("historyList").innerHTML=
-"<p>No matches yet.</p>";
+    html +=
+      "<div class='stats-row'>" +
+      "<span>" + player + "</span>" +
+      "<span>" +
+      stats[player].goals +
+      "G " +
+      stats[player].assists +
+      "A " +
+      stats[player].minutes +
+      "m" +
+      "</span>" +
+      "</div>";
 
-return;
+  });
 
-}
-
-document.getElementById("historyList").innerHTML=
-
-history.map(m=>`
-
-<div class="event">
-
-<strong>${m.score}</strong>
-
-<br>
-
-vs ${m.opponent}
-
-<br>
-
-<small>${m.date}</small>
-
-</div>
-
-`).join("");
+  container.innerHTML += html;
 
 }
 
